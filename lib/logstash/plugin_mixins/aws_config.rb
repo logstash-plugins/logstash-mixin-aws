@@ -21,6 +21,8 @@ module LogStash::PluginMixins::AwsConfig
                                   "eu-west-1", "ap-southeast-1", "ap-southeast-2",
                                   "ap-northeast-1", "sa-east-1", "us-gov-west-1"], :default => US_EAST_1
 
+    config :s3_host, :validate => :string, :default => 'amazonaws.com'
+
     # This plugin uses the AWS SDK and supports several ways to get credentials, which will be tried in this order...
     # 1. Static configuration, using `access_key_id` and `secret_access_key` params in logstash plugin config
     # 2. External credentials file specified by `aws_credentials_file`
