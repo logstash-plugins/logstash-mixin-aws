@@ -7,8 +7,8 @@ class DummyInputAwsConfig < LogStash::Inputs::Base
   include LogStash::PluginMixins::AwsConfig
 
 
-  def aws_service_endpoint(region)
-    { :dummy_input_aws_config_region => "#{region}.awswebservice.local" }
+  def aws_service_endpoint(region, s3_host)
+    { :dummy_input_aws_config_region => "#{region}.#{s3_host}" }
   end
 end
 
@@ -58,7 +58,7 @@ describe LogStash::PluginMixins::AwsConfig do
       let(:settings) { { 'access_key_id' => '1234',  'secret_access_key' => 'secret', 'region' => 'us-west-2' } }
 
       it 'should use provided region to generate the endpoint configuration' do
-        subject[:dummy_input_aws_config_region].should == "us-west-2.awswebservice.local"
+        subject[:dummy_input_aws_config_region].should == "us-west-2.amazonaws.com"
       end
     end
 
@@ -66,7 +66,22 @@ describe LogStash::PluginMixins::AwsConfig do
       let(:settings) { { 'access_key_id' => '1234',  'secret_access_key' => 'secret'} }
 
       it 'should use default region to generate the endpoint configuration' do
-        subject[:dummy_input_aws_config_region].should == "us-east-1.awswebservice.local"
+        subject[:dummy_input_aws_config_region].should == "us-east-1.amazonaws.com"
+      end
+    end
+
+    context 'host provided' do
+      let(:settings) { { 'access_key_id' => '1234',  'secret_access_key' => 'secret', 's3_host' => 's3.mycustom.domain' } }
+      it 'should use provided region to generate the endpoint configuration' do
+        subject[:dummy_input_aws_config_region].should == "s3.mycustom.domain"
+      end
+    end
+
+    context "host not provided" do
+      let(:settings) { { 'access_key_id' => '1234',  'secret_access_key' => 'secret'} }
+
+      it 'should use default region to generate the endpoint configuration' do
+        subject[:dummy_input_aws_config_region].should == "us-east-1.amazonaws.com"
       end
     end
   end
@@ -74,7 +89,7 @@ describe LogStash::PluginMixins::AwsConfig do
   context 'when we arent providing credentials' do
     let(:settings) { {} }
     it 'should always return a hash' do
-      expect(subject).to eq({ :use_ssl => true, :dummy_input_aws_config_region => "us-east-1.awswebservice.local" })  
+      expect(subject).to eq({ :use_ssl => true, :dummy_input_aws_config_region => "us-east-1.amazonaws.com" })
     end
   end
 end
