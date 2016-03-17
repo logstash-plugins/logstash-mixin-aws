@@ -15,7 +15,7 @@ module LogStash::PluginMixins::AwsConfig::V2
       @logger.warn("Likely config error: Only one of access_key_id or secret_access_key was provided but not both.")
     end
 
-    opts[:credentials] = credentials if credentials
+    opts[:credentials] = credentials_v2 if credentials_v2
 
     opts[:http_proxy] = @proxy_uri if @proxy_uri
 
@@ -38,7 +38,7 @@ module LogStash::PluginMixins::AwsConfig::V2
   end
 
   private
-  def credentials
+  def credentials_v2
     @creds ||= begin
                  if @access_key_id && @secret_access_key
                    credentials_opts = {
