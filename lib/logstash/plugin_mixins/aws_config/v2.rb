@@ -62,6 +62,6 @@ module LogStash::PluginMixins::AwsConfig::V2
   end
 
   def assume_role
-    Aws::STS::Client.new(region: @region).assume_role(role_arn: @role_arn, role_session_name: @role_session_name})
+    Aws::STS::Client.new(region: @region).assume_role(role_arn: @role_arn, role_session_name: @role_session_name)
   end
 end
