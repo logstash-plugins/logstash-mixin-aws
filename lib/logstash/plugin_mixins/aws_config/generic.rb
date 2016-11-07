@@ -26,6 +26,12 @@ module LogStash::PluginMixins::AwsConfig::Generic
     # URI to proxy server if required
     config :proxy_uri, :validate => :string
 
+    # Role to assume
+    config :role_arn, :validate => :string
+
+    # Session name to use when assuming a role
+    config :role_session_name, :validate => :string, :default => "logstash-s3-plugin"
+
     # Path to YAML file containing a hash of AWS credentials.
     # This file will only be loaded if `access_key_id` and
     # `secret_access_key` aren't set. The contents of the

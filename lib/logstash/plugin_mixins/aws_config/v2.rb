@@ -49,6 +49,8 @@ module LogStash::PluginMixins::AwsConfig::V2
                    credentials_opts[:session_token] = @session_token if @session_token
                  elsif @aws_credentials_file
                    credentials_opts = YAML.load_file(@aws_credentials_file)
+                 elsif @role_arn
+                   credentials_opts = assume_role.credentials
                  end
 
                  if credentials_opts
@@ -57,5 +59,9 @@ module LogStash::PluginMixins::AwsConfig::V2
                                         credentials_opts[:session_token])
                  end
                end
+  end
+
+  def assume_role
+    Aws::STS::Client.new(region: @region).assume_role(role_arn: @role_arn, role_session_name: @role_session_name})
   end
 end
