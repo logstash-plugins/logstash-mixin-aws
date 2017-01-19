@@ -30,7 +30,7 @@ module LogStash::PluginMixins::AwsConfig::Generic
     config :role_arn, :validate => :string
 
     # Session name to use when assuming a role
-    config :role_session_name, :validate => :string, :default => "logstash-s3-plugin"
+    config :role_session_name, :validate => :string, :default => "logstash"
 
     # Path to YAML file containing a hash of AWS credentials.
     # This file will only be loaded if `access_key_id` and
