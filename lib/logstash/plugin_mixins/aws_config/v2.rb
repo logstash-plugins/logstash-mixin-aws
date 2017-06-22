@@ -29,8 +29,8 @@ module LogStash::PluginMixins::AwsConfig::V2
     # for example, CloudWatch, { :cloud_watch_endpoint => "monitoring.#{region}.amazonaws.com" }
     # For a list, see https://github.com/aws/aws-sdk-ruby/blob/master/lib/aws/core/configuration.rb
     if self.respond_to?(:aws_service_endpoint)
-      opts.merge!(self.aws_service_endpoint(@region))
-    else
+      opts.merge!(self.aws_service_endpoint(@region || LogStash::PluginMixins::AwsConfig::US_EAST_1))
+    elsif @region
       opts.merge!({ :region => @region })
     end
 

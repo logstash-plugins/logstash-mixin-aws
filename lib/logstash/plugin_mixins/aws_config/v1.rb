@@ -49,7 +49,7 @@ module LogStash::PluginMixins::AwsConfig::V1
     # endpoint, which has a string value of the service endpoint hostname
     # for example, CloudWatch, { :cloud_watch_endpoint => "monitoring.#{region}.amazonaws.com" }
     # For a list, see https://github.com/aws/aws-sdk-ruby/blob/master/lib/aws/core/configuration.rb
-    opts.merge!(self.aws_service_endpoint(@region))
+    opts.merge!(self.aws_service_endpoint(@region || LogStash::PluginMixins::AwsConfig::US_EAST_1))
 
     return opts
   end # def aws_options_hash

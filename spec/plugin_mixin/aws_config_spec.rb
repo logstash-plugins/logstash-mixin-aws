@@ -171,8 +171,8 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
       context "region not provided" do
         let(:settings) { { 'access_key_id' => '1234',  'secret_access_key' => 'secret'} }
 
-        it 'should use default region to generate the endpoint configuration' do
-          expect(subject[:region]).to eq("us-east-1")
+        it 'should leave the region blank' do
+          expect(subject).not_to have_key(:region)
         end
       end
     end
