@@ -1,3 +1,12 @@
+## 4.2.4
+  - Minor config validation fixes
+
+## 4.2.3
+  - Fix some documentation issues
+
+## 4.2.1
+  - Add eu-west-2, us-east-2 and ca-central-1 regions
+
 ## 4.2.0
   - Add region ap-south-1
 
