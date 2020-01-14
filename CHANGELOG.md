@@ -1,3 +1,6 @@
+## 4.3.1
+  - Fixed proxy not used for assume role #41
+
 ## 4.3.0
   - Drop strict value validation for region option #36
   - Add endpoint option to customize the endpoint uri #32

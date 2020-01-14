@@ -60,7 +60,7 @@ module LogStash::PluginMixins::AwsConfig::V2
 
   def assume_role
     Aws::AssumeRoleCredentials.new(
-      :client => Aws::STS::Client.new(:region => @region),
+      :client => Aws::STS::Client.new(:region => @region, :http_proxy => @proxy_uri),
       :role_arn => @role_arn,
       :role_session_name => @role_session_name
     )
