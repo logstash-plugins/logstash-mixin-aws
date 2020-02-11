@@ -37,12 +37,13 @@ module LogStash::PluginMixins::AwsConfig::V2
   private
   def credentials
     @creds ||= begin
-                 if @access_key_id && @secret_access_key
+                if ENV['AWS_ROLE_ARN'] && ENV['AWS_WEB_IDENTITY_TOKEN_FILE']
+                  assume_role_with_web_identity
+                elsif @access_key_id && @secret_access_key
                    credentials_opts = {
                      :access_key_id => @access_key_id,
                      :secret_access_key => @secret_access_key.value
                    }
-
                    credentials_opts[:session_token] = @session_token.value if @session_token
                    Aws::Credentials.new(credentials_opts[:access_key_id],
                                         credentials_opts[:secret_access_key],
@@ -65,4 +66,14 @@ module LogStash::PluginMixins::AwsConfig::V2
       :role_session_name => @role_session_name
     )
   end
+
+  def assume_role_with_web_identity
+    Aws::AssumeRoleWebIdentityCredentials.new(
+      :client => Aws::STS::Client.new(:region => @region),
+      :role_arn => ENV['AWS_ROLE_ARN'],
+      :web_identity_token_file => ENV['AWS_WEB_IDENTITY_TOKEN_FILE'],
+      :role_session_name => @role_session_name
+    )
+  end
+
 end
