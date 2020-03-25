@@ -49,5 +49,7 @@ module LogStash::PluginMixins::AwsConfig::Generic
     # ----------------------------------
     #
     config :aws_credentials_file, :validate => :string
+    # A unique identifier that might be required when you assume a role in another account.
+    config :external_id, :validate => :string
   end
 end
