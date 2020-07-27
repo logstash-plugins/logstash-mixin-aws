@@ -106,7 +106,7 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
   subject { DummyInputAwsConfigV2.new(settings).aws_options_hash }
 
   describe 'config credential' do
-    subject { DummyInputAwsConfigV2.new(settings).aws_options_hash[:credentials] }
+  #  subject { DummyInputAwsConfigV2.new(settings).aws_options_hash[:credentials] }
 
     context 'in credential file' do
       let(:settings) { { 'aws_credentials_file' => File.join(File.dirname(__FILE__), '..', 'fixtures/aws_credentials_file_sample_test.yml') } }
