@@ -112,7 +112,7 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
       let(:settings) { { 'aws_credentials_file' => File.join(File.dirname(__FILE__), '..', 'fixtures/aws_credentials_file_sample_test.yml') } }
 
       it 'should support reading configuration from a yaml file' do
-        expect(subject).to include({access_key_id => "1234"})
+        expect(subject).to include({:access_key_id => "1234"})
         expect(subject).to include({:secret_access_key => "secret"}) 
       end
     end
