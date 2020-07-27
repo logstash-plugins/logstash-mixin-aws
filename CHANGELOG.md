@@ -1,3 +1,10 @@
+## Unreleased
+  - Add external_id Attribute option for AWS AssumeRole V2 #46
+  - Update aws-sdk dependency to '~ 2.11'
+  - Update aws-SDK to '~> 2.11'
+  - Changed logic to enable AssumeRole to work when not on AWS ec2, in addition to original code that used IAM of ec2 vm V2 #44
+  - Added HTTP_Proxy option for Assume Role V2 #40
+
 ## 4.3.0
   - Drop strict value validation for region option #36
   - Add endpoint option to customize the endpoint uri #32

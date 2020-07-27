@@ -138,7 +138,7 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
       end
 
       context 'role arn is provided' do
-        let(:settings) { { 'role_arn' => 'arn:aws:iam::012345678910:role/foo', 'region' => 'us-west-2' } }
+        let(:settings) { { 'role_arn' => 'arn:aws:iam::012345678910:role/foo', 'region' => 'us-west-2','external_id' => 'externalid'  } }
         let(:sts_double) { instance_double(Aws::STS::Client) }
         let(:now) { Time.now }
         let(:expiration) { Time.at(now.to_i + 3600) }
