@@ -56,19 +56,19 @@ module LogStash::PluginMixins::AwsConfig::V2
                                         credentials_opts[:session_token])
                   end
                   #assume_role scenarios with or without external_id and http Proxy. external_id does require other code changes
-                  if @role_arn && @role_session_name && @external_id && @proxy_uri
+                  if @role_arn && @external_id && @proxy_uri
                    Aws::AssumeRoleCredentials.new(
                     :client => Aws::STS::Client.new(:region => @region, :http_proxy => @proxy_uri),
                     :role_arn => @role_arn,
                     :role_session_name => @role_session_name,
                     :external_id => @external_id)
-                  elsif @role_arn && @role_session_name && @external_id
+                  elsif @role_arn && @external_id
                    Aws::AssumeRoleCredentials.new(
                     :client => Aws::STS::Client.new(:region => @region),
                     :role_arn => @role_arn,
                     :role_session_name => @role_session_name,
                     :external_id => @external_id)
-                   elsif @role_arn && @role_session_name
+                   elsif @role_arn 
                     Aws::AssumeRoleCredentials.new(
                       :client => Aws::STS::Client.new(:region => @region),
                       :role_arn => @role_arn,
