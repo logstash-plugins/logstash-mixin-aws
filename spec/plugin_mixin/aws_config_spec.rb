@@ -112,8 +112,7 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
       let(:settings) { { 'aws_credentials_file' => File.join(File.dirname(__FILE__), '..', 'fixtures/aws_credentials_file_sample_test.yml') } }
 
       it 'should support reading configuration from a yaml file' do
-        expect(subject.access_key_id).to eq("1234")
-        expect(subject.secret_access_key).to eq("secret")   
+        expect(subject).to include(:access_key_id => "1234", :secret_access_key => "secret")
       end
     end
 
@@ -122,9 +121,11 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
         let(:settings) { { 'access_key_id' => '1234', 'secret_access_key' => 'secret', 'session_token' => 'session_token' } }
 
         it "should support passing as key, value, and session_token" do
-          expect(subject.access_key_id).to eq(settings['access_key_id'])
-          expect(subject.secret_access_key).to eq(settings['secret_access_key'])
-          expect(subject.session_token).to eq(settings['session_token'])
+          expect(subject[:access_key_id]).to eq(settings["access_key_id"])
+          expect(subject[:secret_access_key]).to_not eq(settings["secret_access_key"])
+          expect(subject[:secret_access_key].value).to eq(settings["secret_access_key"])
+          expect(subject[:session_token]).to_not eq(settings["session_token"])
+          expect(subject[:session_token].value).to eq(settings["session_token"])
         end
       end
 
@@ -132,8 +133,9 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
         let(:settings) { { 'access_key_id' => '1234',  'secret_access_key' => 'secret' } }
 
         it 'should support passing credentials as key, value' do
-          expect(subject.access_key_id).to eq(settings['access_key_id'])
-          expect(subject.secret_access_key).to eq(settings['secret_access_key'])
+          expect(subject[:access_key_id]).to eq(settings["access_key_id"])
+          expect(subject[:secret_access_key]).to_not eq(settings["secret_access_key"])
+          expect(subject[:secret_access_key].value).to eq(settings["secret_access_key"])
         end
       end
 
