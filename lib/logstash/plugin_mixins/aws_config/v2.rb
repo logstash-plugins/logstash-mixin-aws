@@ -37,43 +37,46 @@ module LogStash::PluginMixins::AwsConfig::V2
   private
   def credentials
     @creds ||= begin
-    			  #This part will process just an AWS IAM or the AWS IAM required before moving onto Assuming role
-                  if @access_key_id && @secret_access_key
-                   credentials_opts = {
-                     :access_key_id => @access_key_id,
-                     :secret_access_key => @secret_access_key.value
-                   }
-                    if @session_token
-                      credentials_opts[:session_token] = @session_token.value 
-                    end
-                    Aws::Credentials.new(credentials_opts[:access_key_id],
-                                        credentials_opts[:secret_access_key],
-                                        credentials_opts[:session_token])
-                  elsif @aws_credentials_file
-                      credentials_opts = YAML.load_file(@aws_credentials_file)
-                      Aws::Credentials.new(credentials_opts[:access_key_id],
-                                        credentials_opts[:secret_access_key],
-                                        credentials_opts[:session_token])
+                  if @session_token
+                    credentials_opts[:session_token] = @session_token.value 
                   end
-                  #assume_role scenarios with or without external_id and http Proxy. external_id does require other code changes
-                  if @role_arn && @external_id && @proxy_uri
+                  if @role_arn && @external_id && @proxy_uri && @access_key_id && @secret_access_key
                    Aws::AssumeRoleCredentials.new(
-                    :client => Aws::STS::Client.new(:region => @region, :http_proxy => @proxy_uri),
+                    :client => Aws::STS::Client.new(:access_key_id => @access_key_id,
+                      :secret_access_key => @secret_access_key,
+                      :region => @region,
+                      :http_proxy => @proxy_uri),
                     :role_arn => @role_arn,
                     :role_session_name => @role_session_name,
                     :external_id => @external_id)
-                  elsif @role_arn && @external_id
+                  elsif @role_arn && @external_id && @access_key_id && @secret_access_key
                    Aws::AssumeRoleCredentials.new(
-                    :client => Aws::STS::Client.new(:region => @region),
+                    :client => Aws::STS::Client.new(:access_key_id => @access_key_id,
+                      :secret_access_key => @secret_access_key,
+                      :region => @region),
                     :role_arn => @role_arn,
                     :role_session_name => @role_session_name,
                     :external_id => @external_id)
-                   elsif @role_arn 
+                   elsif @role_arn && @proxy_uri
                     Aws::AssumeRoleCredentials.new(
                       :client => Aws::STS::Client.new(:region => @region),
                       :role_arn => @role_arn,
                       :role_session_name => @role_session_name)
-                  end
+                    elsif @role_arn
+                      Aws::AssumeRoleCredentials.new(
+                        :client => Aws::STS::Client.new(:region => @region),
+                        :role_arn => @role_arn,
+                        :role_session_name => @role_session_name)
+                    elsif @access_key_id && @secret_access_key
+                      Aws::Credentials.new(:access_key_id => @access_key_id,
+                        :secret_access_key => @secret_access_key,
+                        :session_token => @session_token)
+                    elsif @aws_credentials_file
+                      credentials_opts = YAML.load_file(@aws_credentials_file)
+                      Aws::Credentials.new(:access_key_id => @access_key_id,
+                        :secret_access_key => @secret_access_key,
+                        :session_token => @session_token)
+                    end
                 end
   end
 
