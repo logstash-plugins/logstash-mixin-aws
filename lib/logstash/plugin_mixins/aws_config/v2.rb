@@ -37,7 +37,18 @@ module LogStash::PluginMixins::AwsConfig::V2
   private
   def credentials
     @creds ||= begin
-                  if @access_key_id && @secret_access_key
+                  if @role_arn && @role_session_name
+                    #assume_role
+                    credentials_opts = {
+                      :access_key_id => @access_key_id,
+                      :secret_access_key => @secret_access_key.value
+                    }
+                    Aws::AssumeRoleCredentials.new(
+                    :client => Aws::STS::Client.new(access_key_id: @access_key_id, secret_access_key: @secret_access_key.value, region: @region),
+                    :role_arn => @role_arn,
+                    :role_session_name => @role_session_name,
+                    :external_id => @external_id)
+                  elsif @access_key_id && @secret_access_key
                    credentials_opts = {
                      :access_key_id => @access_key_id,
                      :secret_access_key => @secret_access_key.value
@@ -54,14 +65,7 @@ module LogStash::PluginMixins::AwsConfig::V2
                                         credentials_opts[:secret_access_key],
                                         credentials_opts[:session_token])
                   end
-                  if @role_arn && @role_session_name
-                   #assume_role
-                   Aws::AssumeRoleCredentials.new(
-                    :client => Aws::STS::Client.new(:region => @region),
-                    :role_arn => @role_arn,
-                    :role_session_name => @role_session_name,
-                    :external_id => @external_id)
-                  end
+                  
                 end
   end
 

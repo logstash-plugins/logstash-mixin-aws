@@ -1,4 +1,8 @@
 # encoding: utf-8
+#$LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, "..","..","..","lib" )))
+#require "bootstrap/environment"
+#Gem.use_paths(LogStash::Environment.logstash_gem_home)
+
 require "logstash/devutils/rspec/spec_helper"
 require "logstash/plugin_mixins/aws_config"
 require 'aws-sdk'
