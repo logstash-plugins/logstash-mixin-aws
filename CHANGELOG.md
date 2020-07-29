@@ -4,7 +4,7 @@
   - Update aws-SDK to '~> 2.11'
   - Changed logic to enable AssumeRole to work when not on AWS ec2 and when config provides access key and secret #44
   - Incorporated HTTP_Proxy attribute as well from branch #41 
-  - Added HTTP_Proxy option for Assume Role V2 #40
+  - Added HTTP_Proxy option for Assume Role V2 #40.
 
 ## 4.3.0
   - Drop strict value validation for region option #36
