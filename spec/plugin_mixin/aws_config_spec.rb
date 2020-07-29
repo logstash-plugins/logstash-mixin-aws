@@ -1,4 +1,8 @@
 # encoding: utf-8
+#$LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, "..","..","..","lib" )))
+#require "bootstrap/environment"
+#Gem.use_paths(LogStash::Environment.logstash_gem_home)
+
 require "logstash/devutils/rspec/spec_helper"
 require "logstash/plugin_mixins/aws_config"
 require 'aws-sdk'
@@ -41,9 +45,9 @@ describe LogStash::PluginMixins::AwsConfig do
 
     context 'inline' do
       context 'temporary credential' do
-        let(:settings) { { 'access_key_id' => '1234', 'secret_access_key' => 'secret', 'session_token' => 'session_token' } }
+        let(:settings) { { 'access_key_id' => '1234', 'secret_access_key' => 'secret', 'session_token' => 'session_token'} }
 
-        it "should support passing as key, value, and session_token" do
+        it "should support passing as key, value and session_token" do
           expect(subject[:access_key_id]).to eq(settings["access_key_id"])
           expect(subject[:secret_access_key]).to_not eq(settings["secret_access_key"])
           expect(subject[:secret_access_key].value).to eq(settings["secret_access_key"])
@@ -138,7 +142,7 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
       end
 
       context 'role arn is provided' do
-        let(:settings) { { 'role_arn' => 'arn:aws:iam::012345678910:role/foo', 'region' => 'us-west-2' } }
+        let(:settings) { { 'role_arn' => 'arn:aws:iam::012345678910:role/foo', 'region' => 'us-west-2','external_id' => 'external_id'  } }
         let(:sts_double) { instance_double(Aws::STS::Client) }
         let(:now) { Time.now }
         let(:expiration) { Time.at(now.to_i + 3600) }

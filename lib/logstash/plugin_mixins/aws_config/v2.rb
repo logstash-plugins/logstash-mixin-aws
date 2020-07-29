@@ -37,32 +37,41 @@ module LogStash::PluginMixins::AwsConfig::V2
   private
   def credentials
     @creds ||= begin
-                 if @access_key_id && @secret_access_key
-                   credentials_opts = {
-                     :access_key_id => @access_key_id,
-                     :secret_access_key => @secret_access_key.value
-                   }
-
-                   credentials_opts[:session_token] = @session_token.value if @session_token
-                   Aws::Credentials.new(credentials_opts[:access_key_id],
+                  if @role_arn && @role_session_name && @access_key_id && @secret_access_key
+                    #assume_role providing all IAM for cross account in conf
+                    Aws::AssumeRoleCredentials.new(
+                      :client => Aws::STS::Client.new(access_key_id: @access_key_id, secret_access_key: @secret_access_key.value, region: @region, http_proxy: @proxy_uri),
+                      :role_arn => @role_arn,
+                      :role_session_name => @role_session_name,
+                      :external_id => @external_id)
+                  elsif @role_arn && @role_session_name
+                     #assume_role providing only ARN in conf and using AWS credential as per SDK search order
+                     Aws::AssumeRoleCredentials.new(
+                      :client => Aws::STS::Client.new( region: @region),
+                      :role_arn => @role_arn,
+                      :role_session_name => @role_session_name,
+                      :external_id => @external_id)
+                  elsif @access_key_id && @secret_access_key
+                    #straight IAM from conf file
+                    credentials_opts = {
+                      :access_key_id => @access_key_id,
+                      :secret_access_key => @secret_access_key.value
+                      }
+                    if @session_token
+                      credentials_opts[:session_token] = @session_token.value 
+                    end
+                    Aws::Credentials.new(credentials_opts[:access_key_id],
                                         credentials_opts[:secret_access_key],
                                         credentials_opts[:session_token])
-                 elsif @aws_credentials_file
-                   credentials_opts = YAML.load_file(@aws_credentials_file)
-                   Aws::Credentials.new(credentials_opts[:access_key_id],
+                  elsif @aws_credentials_file
+                    #load IAM details from file
+                    credentials_opts = YAML.load_file(@aws_credentials_file)
+                    Aws::Credentials.new(credentials_opts[:access_key_id],
                                         credentials_opts[:secret_access_key],
                                         credentials_opts[:session_token])
-                 elsif @role_arn
-                   assume_role
-                 end
-               end
+                  end
+                  
+                end
   end
-
-  def assume_role
-    Aws::AssumeRoleCredentials.new(
-      :client => Aws::STS::Client.new(:region => @region),
-      :role_arn => @role_arn,
-      :role_session_name => @role_session_name
-    )
-  end
+ 
 end

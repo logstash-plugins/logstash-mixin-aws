@@ -33,6 +33,9 @@ module LogStash::PluginMixins::AwsConfig::Generic
     # This is used to generate temporary credentials typically for cross-account access.
     # See https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html for more information.
     config :role_arn, :validate => :string
+    
+    #external id to use when assuming an IAM role
+    config :external_id, :validate => :string
 
     # Session name to use when assuming an IAM role
     config :role_session_name, :validate => :string, :default => "logstash"
