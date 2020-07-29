@@ -1,8 +1,9 @@
 ## Unreleased
-  - Add external_id Attribute option for AWS AssumeRole V2 #46
+  - Added new functionality to enable using external_id Attribute option for AWS AssumeRole V2 #46
   - Update aws-sdk dependency to '~ 2.11'
   - Update aws-SDK to '~> 2.11'
-  - Changed logic to enable AssumeRole to work when not on AWS ec2, in addition to original code that used IAM of ec2 vm V2 #44
+  - Changed logic to enable AssumeRole to work when not on AWS ec2 and when config provides access key and secret #44
+  - Incorporated HTTP_Proxy attribute as well from branch #41 
   - Added HTTP_Proxy option for Assume Role V2 #40
 
 ## 4.3.0
