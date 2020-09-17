@@ -31,10 +31,6 @@ module LogStash::PluginMixins::AwsConfig::V2
 
     opts[:endpoint] = @endpoint unless @endpoint.nil?
 
-    if @access_key_id.is_a?(NilClass) ^ @secret_access_key.is_a?(NilClass)
-      @logger.warn("Likely config error: Only one of access_key_id or secret_access_key was provided but not both.")
-    end
-
     return opts
   end
 
@@ -42,15 +38,11 @@ module LogStash::PluginMixins::AwsConfig::V2
 
   def aws_credentials
     if @access_key_id && @secret_access_key
-      credentials_opts = {
-        :access_key_id => @access_key_id,
-        :secret_access_key => @secret_access_key.value
-      }
-
-      credentials_opts[:session_token] = @session_token.value if @session_token
-      Aws::Credentials.new(credentials_opts[:access_key_id],
-                           credentials_opts[:secret_access_key],
-                           credentials_opts[:session_token])
+      Aws::Credentials.new(@access_key_id, @secret_access_key.value, @session_token ? @session_token.value : nil)
+    elsif @access_key_id.nil? ^ @secret_access_key.nil?
+      @logger.warn("Likely config error: Only one of access_key_id or secret_access_key was provided but not both.")
+      secret_access_key = @secret_access_key ? @secret_access_key.value : nil
+      Aws::Credentials.new(@access_key_id, secret_access_key, @session_token ? @session_token.value : nil)
     elsif @aws_credentials_file
       credentials_opts = YAML.load_file(@aws_credentials_file)
       credentials_opts.default_proc = lambda { |hash, key| hash.fetch(key.to_s, nil) }
