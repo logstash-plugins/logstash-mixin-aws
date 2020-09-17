@@ -206,13 +206,14 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
           }
         end
 
-        let(:subject) { DummyInputAwsConfigV2NoRegionMethod.new(settings).aws_options_hash[:credentials] }
+        let(:aws_options_hash) { DummyInputAwsConfigV2NoRegionMethod.new(settings).aws_options_hash }
 
         before do
           allow_any_instance_of(Aws::AssumeRoleCredentials).to receive(:refresh) # called from #initialize
         end
 
         it 'uses credentials' do
+          subject = aws_options_hash[:credentials]
           expect( subject ).to be_a Aws::AssumeRoleCredentials
           expect( subject.client ).to be_a Aws::STS::Client
           expect( credentials = subject.client.config.credentials ).to be_a Aws::Credentials
@@ -220,8 +221,14 @@ describe LogStash::PluginMixins::AwsConfig::V2 do
         end
 
         it 'sets up proxy on client and region' do
+          subject = aws_options_hash[:credentials]
           expect( subject.client.config.http_proxy ).to eql 'http://a-proxy.net:1234'
-          expect( subject.client.config.region ).to eql 'us-west-2'
+          expect( subject.client.config.region ).to eql 'us-west-2' # probably redundant (kept for backwards compat)
+        end
+
+        it 'sets up region top-level' do
+          # NOTE: this one is required for real with role_arn :
+          expect( aws_options_hash[:region] ).to eql 'us-west-2'
         end
 
       end

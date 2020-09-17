@@ -13,6 +13,14 @@ module LogStash::PluginMixins::AwsConfig::V2
 
     opts[:http_proxy] = @proxy_uri if @proxy_uri
 
+    if @role_arn
+      credentials = assume_role(opts)
+      opts = { :credentials => credentials }
+    else
+      credentials = aws_credentials
+      opts[:credentials] = credentials if credentials
+    end
+
     if self.respond_to?(:aws_service_endpoint)
       # used by CloudWatch to basically do the same as bellow (returns { region: region })
       opts.merge!(self.aws_service_endpoint(@region))
@@ -25,14 +33,6 @@ module LogStash::PluginMixins::AwsConfig::V2
 
     if @access_key_id.is_a?(NilClass) ^ @secret_access_key.is_a?(NilClass)
       @logger.warn("Likely config error: Only one of access_key_id or secret_access_key was provided but not both.")
-    end
-
-    if @role_arn
-      credentials = assume_role(opts)
-      opts = { :credentials => credentials }
-    else
-      credentials = aws_credentials
-      opts[:credentials] = credentials if credentials
     end
 
     return opts
@@ -68,6 +68,9 @@ module LogStash::PluginMixins::AwsConfig::V2
       credentials = aws_credentials
       opts[:credentials] = credentials if credentials
     end
+
+    # for a regional endpoint :region is always required by AWS
+    opts[:region] = @region
 
     Aws::AssumeRoleCredentials.new(
         :client => Aws::STS::Client.new(opts),
