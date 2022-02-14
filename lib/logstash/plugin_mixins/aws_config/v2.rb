@@ -34,6 +34,10 @@ module LogStash::PluginMixins::AwsConfig::V2
     return opts
   end
 
+  def symbolized_settings
+    @symbolized_settings ||= symbolize_keys_and_cast_true_false(@additional_settings)
+  end
+
   private
 
   def aws_credentials
@@ -70,4 +74,20 @@ module LogStash::PluginMixins::AwsConfig::V2
         :role_session_name => @role_session_name
     )
   end
+
+  def symbolize_keys_and_cast_true_false(hash)
+    case hash
+    when Hash
+      symbolized = {}
+      hash.each { |key, value| symbolized[key.to_sym] = symbolize_keys_and_cast_true_false(value) }
+      symbolized
+    when 'true'
+      true
+    when 'false'
+      false
+    else
+      hash
+    end
+  end
+
 end
