@@ -32,7 +32,7 @@ module LogStash::PluginMixins::AwsConfig::V2
     opts[:endpoint] = @endpoint unless @endpoint.nil?
 
     if respond_to?(:additional_settings)
-      opts.merge! symbolize_keys_and_cast_true_false(additional_settings)
+      opts = symbolize_keys_and_cast_true_false(additional_settings).merge(opts)
     end
 
     return opts
