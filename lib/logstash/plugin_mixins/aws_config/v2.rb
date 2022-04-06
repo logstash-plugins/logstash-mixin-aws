@@ -41,7 +41,9 @@ module LogStash::PluginMixins::AwsConfig::V2
   private
 
   def aws_credentials
-    if @access_key_id && @secret_access_key
+    if ENV['AWS_ROLE_ARN'] && ENV['AWS_WEB_IDENTITY_TOKEN_FILE']
+      assume_role_with_web_identity
+    elsif @access_key_id && @secret_access_key
       Aws::Credentials.new(@access_key_id, @secret_access_key.value, @session_token ? @session_token.value : nil)
     elsif @access_key_id.nil? ^ @secret_access_key.nil?
       @logger.warn("Likely config error: Only one of access_key_id or secret_access_key was provided but not both.")
@@ -72,6 +74,15 @@ module LogStash::PluginMixins::AwsConfig::V2
         :client => Aws::STS::Client.new(opts),
         :role_arn => @role_arn,
         :role_session_name => @role_session_name
+    )
+  end
+
+  def assume_role_with_web_identity
+    Aws::AssumeRoleWebIdentityCredentials.new(
+      :client => Aws::STS::Client.new(:region => @region),
+      :role_arn => ENV['AWS_ROLE_ARN'],
+      :web_identity_token_file => ENV['AWS_WEB_IDENTITY_TOKEN_FILE'],
+      :role_session_name => @role_session_name
     )
   end
 
