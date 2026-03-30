@@ -50,5 +50,18 @@ module LogStash::PluginMixins::AwsConfig::Generic
     # ----------------------------------
     #
     config :aws_credentials_file, :validate => :string
+
+    # By default, this plugin uses cert available to OpenSSL provided by OS
+    # when verifying SSL peer certificates.
+    # For cases where the default cert is unavailable, e.g. Windows,
+    # you can use the bundled ca certificate provided by AWS SDK
+    # by setting `use_aws_bundled_ca` to true
+    config :use_aws_bundled_ca, :validate => :boolean, :default => false
+
+    # Absolute path to the file on disk containing OIDC token for IRSA
+    # In AWS EKS, this should be set to "/var/run/secrets/eks.amazonaws.com/serviceaccount/token",
+    # the default location where EKS projects the token.
+    # `role_arn` must be configured when `web_identity_token_file` is used
+    config :web_identity_token_file, :validate => :string
   end
 end
